@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatCommentMapper">
+    
+    <resultMap type="ChatComment" id="ChatCommentResult">
+        <result property="id"    column="id"    />
+        <result property="content"    column="content"    />
+        <result property="contact"    column="contact"    />
+    </resultMap>
+
+    <sql id="selectChatCommentVo">
+        select id, content, contact from chat_comment
+    </sql>
+
+    <select id="selectChatCommentList" parameterType="ChatComment" resultMap="ChatCommentResult">
+        <include refid="selectChatCommentVo"/>
+        <where>  
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatCommentById" parameterType="Long" resultMap="ChatCommentResult">
+        <include refid="selectChatCommentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatComment" parameterType="ChatComment" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="content != null and content != ''">content,</if>
+            <if test="contact != null">contact,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="contact != null">#{contact},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatComment" parameterType="ChatComment">
+        update chat_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="contact != null">contact = #{contact},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatCommentById" parameterType="Long">
+        delete from chat_comment where id = #{id}
+    </delete>
+
+    <delete id="deleteChatCommentByIds" parameterType="String">
+        delete from chat_comment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatSessionMapper">
+    
+    <resultMap type="ChatSession" id="ChatSessionResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="seq"    column="seq"    />
+        <result property="modelId"    column="model_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+    </resultMap>
+
+    <sql id="selectChatSessionVo">
+        select id, user_id, seq, model_id, start_time, end_time from chat_session
+    </sql>
+
+    <select id="selectChatSessionList" parameterType="ChatSession" resultMap="ChatSessionResult">
+        <include refid="selectChatSessionVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="seq != null  and seq != ''"> and seq = #{seq}</if>
+            <if test="modelId != null "> and model_id = #{modelId}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatSessionById" parameterType="Long" resultMap="ChatSessionResult">
+        <include refid="selectChatSessionVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatSession" parameterType="ChatSession" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_session
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="seq != null and seq != ''">seq,</if>
+            <if test="modelId != null">model_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="seq != null and seq != ''">#{seq},</if>
+            <if test="modelId != null">#{modelId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatSession" parameterType="ChatSession">
+        update chat_session
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="seq != null and seq != ''">seq = #{seq},</if>
+            <if test="modelId != null">model_id = #{modelId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatSessionById" parameterType="Long">
+        delete from chat_session where id = #{id}
+    </delete>
+
+    <delete id="deleteChatSessionByIds" parameterType="String">
+        delete from chat_session where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectChatSessionsListByUserName" parameterType="java.lang.String" resultType="com.ruoyi.chat.vo.ChatSessionWithModel">
+        select a.*,
+                     b.name,
+                     b.img
+              from chat_session a
+                       inner join chat_model b on a.model_id = b.id
+              where a.user_id = #{username} order by a.start_time desc
+    </select>
+
+
+
+</mapper>

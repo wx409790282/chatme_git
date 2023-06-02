@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatKeysMapper">
+    
+    <resultMap type="ChatKeys" id="ChatKeysResult">
+        <result property="id"    column="id"    />
+        <result property="secret"    column="secret"    />
+        <result property="status"    column="status"    />
+        <result property="optTime"    column="opt_time"    />
+    </resultMap>
+
+    <sql id="selectChatKeysVo">
+        select id, secret, status, opt_time from chat_keys
+    </sql>
+
+    <select id="selectChatKeysList" parameterType="ChatKeys" resultMap="ChatKeysResult">
+        <include refid="selectChatKeysVo"/>
+        <where>  
+            <if test="secret != null  and secret != ''"> and secret = #{secret}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="optTime != null "> and opt_time = #{optTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatKeysById" parameterType="Long" resultMap="ChatKeysResult">
+        <include refid="selectChatKeysVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatKeys" parameterType="ChatKeys" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_keys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="secret != null">secret,</if>
+            <if test="status != null">status,</if>
+            <if test="optTime != null">opt_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="secret != null">#{secret},</if>
+            <if test="status != null">#{status},</if>
+            <if test="optTime != null">#{optTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatKeys" parameterType="ChatKeys">
+        update chat_keys
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="secret != null">secret = #{secret},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="optTime != null">opt_time = #{optTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatKeysById" parameterType="Long">
+        delete from chat_keys where id = #{id}
+    </delete>
+
+    <delete id="deleteChatKeysByIds" parameterType="String">
+        delete from chat_keys where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

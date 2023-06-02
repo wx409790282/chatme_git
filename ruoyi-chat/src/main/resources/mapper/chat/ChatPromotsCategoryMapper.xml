@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatPromotsCategoryMapper">
+    
+    <resultMap type="ChatPromotsCategory" id="ChatPromotsCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="optTime"    column="opt_time"    />
+    </resultMap>
+
+    <sql id="selectChatPromotsCategoryVo">
+        select id, name, opt_time from chat_promots_category
+    </sql>
+
+    <select id="selectChatPromotsCategoryList" parameterType="ChatPromotsCategory" resultMap="ChatPromotsCategoryResult">
+        <include refid="selectChatPromotsCategoryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="optTime != null "> and opt_time = #{optTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatPromotsCategoryById" parameterType="Long" resultMap="ChatPromotsCategoryResult">
+        <include refid="selectChatPromotsCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatPromotsCategory" parameterType="ChatPromotsCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_promots_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="optTime != null">opt_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="optTime != null">#{optTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatPromotsCategory" parameterType="ChatPromotsCategory">
+        update chat_promots_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="optTime != null">opt_time = #{optTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatPromotsCategoryById" parameterType="Long">
+        delete from chat_promots_category where id = #{id}
+    </delete>
+
+    <delete id="deleteChatPromotsCategoryByIds" parameterType="String">
+        delete from chat_promots_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

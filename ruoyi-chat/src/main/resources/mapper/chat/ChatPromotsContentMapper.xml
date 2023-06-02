@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatPromotsContentMapper">
+    
+    <resultMap type="ChatPromotsContent" id="ChatPromotsContentResult">
+        <result property="id"    column="id"    />
+        <result property="category"    column="category"    />
+        <result property="content"    column="content"    />
+        <result property="optTime"    column="opt_time"    />
+    </resultMap>
+
+    <sql id="selectChatPromotsContentVo">
+        select id, category, content, opt_time from chat_promots_content
+    </sql>
+
+    <select id="selectChatPromotsContentList" parameterType="ChatPromotsContent" resultMap="ChatPromotsContentResult">
+        <include refid="selectChatPromotsContentVo"/>
+        <where>  
+            <if test="category != null "> and category = #{category}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+            <if test="optTime != null "> and opt_time = #{optTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatPromotsContentById" parameterType="Long" resultMap="ChatPromotsContentResult">
+        <include refid="selectChatPromotsContentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatPromotsContent" parameterType="ChatPromotsContent" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_promots_content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="category != null">category,</if>
+            <if test="content != null">content,</if>
+            <if test="optTime != null">opt_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="category != null">#{category},</if>
+            <if test="content != null">#{content},</if>
+            <if test="optTime != null">#{optTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatPromotsContent" parameterType="ChatPromotsContent">
+        update chat_promots_content
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="category != null">category = #{category},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="optTime != null">opt_time = #{optTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatPromotsContentById" parameterType="Long">
+        delete from chat_promots_content where id = #{id}
+    </delete>
+
+    <delete id="deleteChatPromotsContentByIds" parameterType="String">
+        delete from chat_promots_content where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

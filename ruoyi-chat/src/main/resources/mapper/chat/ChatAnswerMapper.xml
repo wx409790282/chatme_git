@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatAnswerMapper">
+    
+    <resultMap type="ChatAnswer" id="ChatAnswerResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="sessionId"    column="session_id"    />
+        <result property="seq"    column="seq"    />
+        <result property="question"    column="question"    />
+        <result property="questionFrom"    column="question_from"    />
+        <result property="questionLength"    column="question_length"    />
+        <result property="questionTime"    column="question_time"    />
+        <result property="answerFrom"    column="answer_from"    />
+        <result property="answer"    column="answer"    />
+        <result property="answerLength"    column="answer_length"    />
+        <result property="answerTime"    column="answer_time"    />
+    </resultMap>
+
+    <sql id="selectChatAnswerVo">
+        select id, user_id, session_id, seq, question, question_from, question_length, question_time, answer_from, answer, answer_length, answer_time from chat_answer
+    </sql>
+
+    <select id="selectChatAnswerList" parameterType="ChatAnswer" resultMap="ChatAnswerResult">
+        <include refid="selectChatAnswerVo"/>
+        <where>  
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="sessionId != null  and sessionId != ''"> and session_id = #{sessionId}</if>
+            <if test="seq != null  and seq != ''"> and seq = #{seq}</if>
+            <if test="question != null  and question != ''"> and question = #{question}</if>
+            <if test="questionFrom != null  and questionFrom != ''"> and question_from = #{questionFrom}</if>
+            <if test="questionLength != null "> and question_length = #{questionLength}</if>
+            <if test="questionTime != null "> and question_time = #{questionTime}</if>
+            <if test="answerFrom != null  and answerFrom != ''"> and answer_from = #{answerFrom}</if>
+            <if test="answer != null  and answer != ''"> and answer = #{answer}</if>
+            <if test="answerLength != null "> and answer_length = #{answerLength}</if>
+            <if test="answerTime != null "> and answer_time = #{answerTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatAnswerById" parameterType="Long" resultMap="ChatAnswerResult">
+        <include refid="selectChatAnswerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatAnswer" parameterType="ChatAnswer" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_answer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="sessionId != null">session_id,</if>
+            <if test="seq != null">seq,</if>
+            <if test="question != null and question != ''">question,</if>
+            <if test="questionFrom != null">question_from,</if>
+            <if test="questionLength != null">question_length,</if>
+            <if test="questionTime != null">question_time,</if>
+            <if test="answerFrom != null">answer_from,</if>
+            <if test="answer != null">answer,</if>
+            <if test="answerLength != null">answer_length,</if>
+            <if test="answerTime != null">answer_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="sessionId != null">#{sessionId},</if>
+            <if test="seq != null">#{seq},</if>
+            <if test="question != null and question != ''">#{question},</if>
+            <if test="questionFrom != null">#{questionFrom},</if>
+            <if test="questionLength != null">#{questionLength},</if>
+            <if test="questionTime != null">#{questionTime},</if>
+            <if test="answerFrom != null">#{answerFrom},</if>
+            <if test="answer != null">#{answer},</if>
+            <if test="answerLength != null">#{answerLength},</if>
+            <if test="answerTime != null">#{answerTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatAnswer" parameterType="ChatAnswer">
+        update chat_answer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="sessionId != null">session_id = #{sessionId},</if>
+            <if test="seq != null">seq = #{seq},</if>
+            <if test="question != null and question != ''">question = #{question},</if>
+            <if test="questionFrom != null">question_from = #{questionFrom},</if>
+            <if test="questionLength != null">question_length = #{questionLength},</if>
+            <if test="questionTime != null">question_time = #{questionTime},</if>
+            <if test="answerFrom != null">answer_from = #{answerFrom},</if>
+            <if test="answer != null">answer = #{answer},</if>
+            <if test="answerLength != null">answer_length = #{answerLength},</if>
+            <if test="answerTime != null">answer_time = #{answerTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatAnswerById" parameterType="Long">
+        delete from chat_answer where id = #{id}
+    </delete>
+
+    <delete id="deleteChatAnswerByIds" parameterType="String">
+        delete from chat_answer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

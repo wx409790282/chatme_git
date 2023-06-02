@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatUserMapper">
+    
+    <resultMap type="ChatUser" id="ChatUserResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="balance"    column="balance"    />
+        <result property="totalCharge"    column="total_charge"    />
+        <result property="lastCharge"    column="last_charge"    />
+    </resultMap>
+
+    <sql id="selectChatUserVo">
+        select id, user_id, balance, total_charge, last_charge from chat_user
+    </sql>
+
+    <select id="selectChatUserList" parameterType="ChatUser" resultMap="ChatUserResult">
+        <include refid="selectChatUserVo"/>
+        <where>  
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="balance != null "> and balance = #{balance}</if>
+            <if test="totalCharge != null "> and total_charge = #{totalCharge}</if>
+            <if test="lastCharge != null "> and last_charge = #{lastCharge}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatUserById" parameterType="Long" resultMap="ChatUserResult">
+        <include refid="selectChatUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatUser" parameterType="ChatUser" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="balance != null">balance,</if>
+            <if test="totalCharge != null">total_charge,</if>
+            <if test="lastCharge != null">last_charge,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="totalCharge != null">#{totalCharge},</if>
+            <if test="lastCharge != null">#{lastCharge},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatUser" parameterType="ChatUser">
+        update chat_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="balance != null">balance = #{balance},</if>
+            <if test="totalCharge != null">total_charge = #{totalCharge},</if>
+            <if test="lastCharge != null">last_charge = #{lastCharge},</if>
+        </trim>
+        where id = #{id}
+    </update>
+<!--    <update id="updateChatUserByPayment" parameterType="Long">-->
+<!--        update chat_user-->
+<!--        <trim prefix="SET" suffixOverrides=",">-->
+<!--            balance =balance+ #{count}-->
+<!--        </trim>-->
+<!--        where user_id = #{id}-->
+<!--    </update>-->
+
+    <delete id="deleteChatUserById" parameterType="Long">
+        delete from chat_user where id = #{id}
+    </delete>
+
+    <delete id="deleteChatUserByIds" parameterType="String">
+        delete from chat_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

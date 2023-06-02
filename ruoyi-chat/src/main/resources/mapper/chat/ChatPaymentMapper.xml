@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatPaymentMapper">
+    
+    <resultMap type="ChatPayment" id="ChatPaymentResult">
+        <result property="id"    column="id"    />
+        <result property="originAmount"    column="origin_amount"    />
+        <result property="amount"    column="amount"    />
+        <result property="count"    column="count"    />
+        <result property="describ"    column="describ"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectChatPaymentVo">
+        select id, origin_amount, amount, count,describ, status from chat_payment
+    </sql>
+
+    <select id="selectChatPaymentList" parameterType="ChatPayment" resultMap="ChatPaymentResult">
+        <include refid="selectChatPaymentVo"/>
+        <where>  
+            <if test="originAmount != null "> and origin_amount = #{originAmount}</if>
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="count != null "> and count = #{count}</if>
+            and status = 1
+        </where>
+    </select>
+    
+    <select id="selectChatPaymentById" parameterType="Long" resultMap="ChatPaymentResult">
+        <include refid="selectChatPaymentVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatPayment" parameterType="ChatPayment" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_payment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="originAmount != null">origin_amount,</if>
+            <if test="amount != null">amount,</if>
+            <if test="count != null">count,</if>
+            <if test="describ != null">describ,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="originAmount != null">#{originAmount},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="count != null">#{count},</if>
+            <if test="describ != null">#{describ},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatPayment" parameterType="ChatPayment">
+        update chat_payment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="originAmount != null">origin_amount = #{originAmount},</if>
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="describ != null">count = #{describ},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatPaymentById" parameterType="Long">
+        delete from chat_payment where id = #{id}
+    </delete>
+
+    <delete id="deleteChatPaymentByIds" parameterType="String">
+        delete from chat_payment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>

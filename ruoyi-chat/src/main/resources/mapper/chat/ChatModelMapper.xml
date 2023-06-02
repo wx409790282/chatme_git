@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.chat.mapper.ChatModelMapper">
+    
+    <resultMap type="ChatModel" id="ChatModelResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="img"    column="img"    />
+        <result property="describ"    column="describ"    />
+        <result property="content"    column="content"    />
+    </resultMap>
+
+    <sql id="selectChatModelVo">
+        select id, name, img, describ, content from chat_model
+    </sql>
+
+    <select id="selectChatModelList" parameterType="ChatModel" resultMap="ChatModelResult">
+        <include refid="selectChatModelVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="img != null  and img != ''"> and img = #{img}</if>
+            <if test="describ != null  and describ != ''"> and describ = #{describ}</if>
+            <if test="content != null  and content != ''"> and content = #{content}</if>
+        </where>
+    </select>
+    
+    <select id="selectChatModelById" parameterType="Long" resultMap="ChatModelResult">
+        <include refid="selectChatModelVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertChatModel" parameterType="ChatModel" useGeneratedKeys="true" keyProperty="id">
+        insert into chat_model
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="img != null">img,</if>
+            <if test="describ != null and describ != ''">describ,</if>
+            <if test="content != null and content != ''">content,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="img != null">#{img},</if>
+            <if test="describ != null and describ != ''">#{describ},</if>
+            <if test="content != null and content != ''">#{content},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChatModel" parameterType="ChatModel">
+        update chat_model
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="describ != null and describ != ''">describ = #{describ},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChatModelById" parameterType="Long">
+        delete from chat_model where id = #{id}
+    </delete>
+
+    <delete id="deleteChatModelByIds" parameterType="String">
+        delete from chat_model where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
